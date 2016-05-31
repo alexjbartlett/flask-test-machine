@@ -1,7 +1,7 @@
-from bs4 import BeautifulSoup
+from inspection import HtmlAssertions
 
 
-class Browser():
+class Browser(object, HtmlAssertions):
 
     _soup = None
 
@@ -58,33 +58,9 @@ class Browser():
         return self.open(action, method=method, data=form_data)
 
     @property
-    def soup(self):
+    def html(self):
 
         assert self.rsp, 'You must send a request to the app before ' \
-                          'inspecting the response'
+                         'accessing the response'
 
-        if not self._soup:
-            self._soup = BeautifulSoup(self.rsp.data, 'html.parser')
-
-        return self._soup
-
-    def assert_definition(self, dt_text, dd_text):
-        '''
-        Asserts that a matching <dd> and <dt> can be found
-
-        Args:
-            dt_text (string): Text to match a <dt> on
-            dd_text (string): This text must be in the next <dd>
-        '''
-
-        dt = self.soup.find('dt', text=dt_text)
-        assert dt, 'No <dt> found with text ' + dt_text
-        dd = dt.findNext('dd')
-        assert dd, 'No <dd> found after <dt>'
-        assert dd.text == dd_text, '<dd> did not match {} was {}'\
-            .format(dd_text, dd.text)
-
-    def assert_link(self, text=None, href=None):
-
-        a = self.soup.find('a', text=text, href=href)
-        assert a
+        return self.rsp.data
