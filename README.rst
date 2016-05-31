@@ -1,15 +1,10 @@
-This file requires editing
-==========================
+Flask Test Engine
+=================
 
-Note to the author: Please add something informative to this README *before*
-releasing your software, as `a little documentation goes a long way`_.  Both
-README.rst (this file) and NEWS.txt (release notes) will be included in your
-package metadata which gets displayed in the PyPI page for your project.
+This package provides some additional tools for use when testing
+Flask applications with HTML interfaces.
 
-You can take a look at the README.txt of other projects, such as repoze.bfg
-(http://bfg.repoze.org/trac/browser/trunk/README.txt) for some ideas.
-
-.. _`a little documentation goes a long way`: http://www.martinaspeli.net/articles/a-little-documentation-goes-a-long-way
+It is currently in version 0.0.1 and not ready for use by anyone.
 
 Credits
 -------

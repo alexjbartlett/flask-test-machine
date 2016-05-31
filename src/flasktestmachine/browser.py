@@ -4,6 +4,7 @@ from inspection import HtmlAssertions
 class Browser(object, HtmlAssertions):
 
     _soup = None
+    html = ''
 
     def __init__(self, client):
         self.client = client
@@ -38,9 +39,19 @@ class Browser(object, HtmlAssertions):
 
         assert self.rsp.status_code == 200
 
+        self.html = self.rsp.data
+
         return self.rsp
 
     def submit_form(self, selector, data):
+        """
+        Submits the form, found in the html identified by selector to the app.
+        All form values in the html are sent along with any values
+        in the data param
+        :param selector: (dict) values to find the form
+        :param data: (dict) additional data to post with the form
+        :return:
+        """
 
         form = self.soup.find('form', selector)
         assert form, 'Form not found'
@@ -57,10 +68,3 @@ class Browser(object, HtmlAssertions):
 
         return self.open(action, method=method, data=form_data)
 
-    @property
-    def html(self):
-
-        assert self.rsp, 'You must send a request to the app before ' \
-                         'accessing the response'
-
-        return self.rsp.data
