@@ -68,3 +68,16 @@ class Browser(object, HtmlAssertions):
 
         return self.open(action, method=method, data=form_data)
 
+    def follow_link(self, text=None, href=None):
+        """
+        Assert that a <a> tag exists containing text (if set)
+        with href href (if set), then sends a get request
+        to the specified url
+        :param text: (str) Text content of teh tag
+        :param href: (str) Value of the href attribute of the tag
+        :return: None
+        """
+
+        a = self.assert_link(text=text, href=href)
+
+        self.get(a['href'])

@@ -9,6 +9,13 @@ def test_assert_link():
     h.assert_link(text='Some Text', href='/abc')
 
 
+def test_assert_link_by_text():
+    h = HtmlAssertions()
+    h.html = '<html><a href="/abc">Some Text</a></html>'
+
+    h.assert_link(text='Some Text')
+
+
 def test_assert_link_fail_wrong_text():
     h = HtmlAssertions()
     h.html = '<html><a href="/abc">Some Text</a></html>'

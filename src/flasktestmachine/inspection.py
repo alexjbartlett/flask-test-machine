@@ -34,10 +34,17 @@ class HtmlAssertions():
         Asserts that a matching <a> tag is found
         :param text: (str) Text content of the tag
         :param href: (str) Value of the href attribute of the tag
-        :return: None
+        :return: The <a> that was found
         '''
-        a = self.soup.find('a', text=text, href=href)
+
+        kwargs = {}
+        if href:
+            kwargs['href'] = href
+
+        a = self.soup.find('a', text=text, **kwargs)
         assert a
+
+        return a
 
     def assert_table(self, id=None, head=None, rows=None, foot=None):
         '''

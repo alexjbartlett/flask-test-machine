@@ -67,3 +67,28 @@ def test_submit_form():
     subject.submit_form({}, {'x': 'y'})
 
     assert subject.html == 'Success'
+
+
+def test_follow_link():
+
+    class Client():
+
+        def open(self, url, *args, **kwargs):
+            assert url == '/right'
+            assert kwargs.get('method') == 'GET'
+            assert kwargs.get('follow_redirects') == False
+
+            return _Response(200, 'Sent OK')
+
+    subject = Browser(Client())
+    subject.url = '/xyz'
+    subject.html = """
+        <html><body>
+            <a href="/right" >The One</a>
+            <a href="/wrong" >Not The One</a>
+        </body></html>
+    """
+
+    subject.follow_link(text='The One')
+
+    assert subject.html == 'Sent OK'
