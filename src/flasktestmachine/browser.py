@@ -1,4 +1,5 @@
 from inspection import HtmlAssertions
+import json
 
 
 class Browser(object, HtmlAssertions):
@@ -31,6 +32,9 @@ class Browser(object, HtmlAssertions):
         self.url = url
         self.rsp = self.client.open(url, *args, **kwargs)
 
+        if 'data' in kwargs:
+            del kwargs['data']
+
         while self.rsp and self.rsp.status_code in [301, 302]:
             self.url = self.rsp.location
             kwargs['method'] = 'GET'
@@ -39,7 +43,12 @@ class Browser(object, HtmlAssertions):
 
         assert self.rsp.status_code == 200
 
-        self.html = self.rsp.data
+        if self.rsp.content_type == 'application/json':
+            self.json = json.loads(self.rsp.data)
+            self.html = None
+        else:
+            self.json = None
+            self.html = self.rsp.data
 
         return self.rsp
 

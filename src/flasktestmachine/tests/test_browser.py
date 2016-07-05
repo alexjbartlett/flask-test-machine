@@ -1,12 +1,27 @@
 from flasktestmachine.browser import  Browser
+import json
 
 
 class _Response():
 
-    def __init__(self, status_code, data, location=None):
+    def __init__(self, status_code, data,
+                 location=None,
+                 content_type='text/html'):
+
         self.status_code = status_code
         self.data = data
         self.location = location
+        self.content_type = content_type
+
+
+class _JsonResponse():
+
+    def __init__(self, status_code, data):
+
+        self.status_code = status_code
+        self.data = json.dumps(data)
+        self.content_type = 'application/json'
+
 
 def test_get():
 
@@ -39,6 +54,23 @@ def test_post():
     subject = Browser(Client())
 
     subject.post('/abcdefg', data={'key': 'value'})
+
+
+def test_json_response():
+
+    class Client():
+
+        def open(self, url, *args, **kwargs):
+            assert url == '/jsonendpoint'
+            assert kwargs.get('method') == 'POST'
+
+            return _JsonResponse(200, {'value': 7})
+
+    subject = Browser(Client())
+
+    subject.post('/jsonendpoint')
+
+    assert subject.json == {'value': 7}
 
 
 def test_submit_form():
