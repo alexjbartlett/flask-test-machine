@@ -62,24 +62,18 @@ class HtmlAssertions():
 
         assert table, 'No table found'
 
-        if head:
-            _assert_table_rows(table.find('thead'), head, 'header')
-        if rows:
-            _assert_table_rows(table.find('tbody'), rows, 'body')
-        if foot:
-            _assert_table_rows(table.find('tfoot'), foot, 'footer')
-
-
+        _assert_table_rows(table.find('thead'), head or [], 'header')
+        _assert_table_rows(table.find('tbody'), rows or [], 'body')
+        _assert_table_rows(table.find('tfoot'), foot or [], 'footer')
 
 def _assert_table_rows(section, expected, noun):
 
-    assert section, 'Table {} not found'.format(noun)
+    if section:
+        rows = []
+        for tr in section.findAll('tr'):
+            data = [td.text.strip() for td in tr.findAll(['th', 'td'])]
+            rows.append(data)
+    else:
+        rows = []
 
-    rows = section.findAll('tr')
-    assert len(rows) == len(expected), 'Wrong number of {} rows'.format(noun)
-
-    for tr, r in zip(rows, expected):
-        cells = tr.findAll(['th', 'td'])
-        assert len(cells) == len(r), 'Wrong number of {} cells'.format(noun)
-        for th, d in zip(cells, r):
-            assert th.text == d
+    assert expected == rows

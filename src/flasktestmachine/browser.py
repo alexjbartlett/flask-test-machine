@@ -75,6 +75,9 @@ class Browser(object, HtmlAssertions):
         action = form.get('action') or self.url
         method = form.get('method').upper()
 
+        if method == 'GET':
+            return self.open(action, method='GET', query_string=form_data)
+
         return self.open(action, method=method, data=form_data)
 
     def follow_link(self, text=None, href=None):
