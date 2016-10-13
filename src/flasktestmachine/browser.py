@@ -27,6 +27,7 @@ class Browser(object, HtmlAssertions):
 
         # We need to follow redirects ourselves to keep track of the location
         kwargs['follow_redirects'] = False
+        expected_status = kwargs.pop('status', 200)
 
         self._soup = None
         self.url = url
@@ -41,7 +42,7 @@ class Browser(object, HtmlAssertions):
 
             self.rsp = self.client.open(self.url, *args, **kwargs)
 
-        assert self.rsp.status_code == 200
+        assert self.rsp.status_code == expected_status
 
         if self.rsp.content_type == 'application/json':
             self.json = json.loads(self.rsp.data)

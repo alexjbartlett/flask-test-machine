@@ -30,13 +30,29 @@ def test_get():
         def open(self, url, *args, **kwargs):
             assert url == '/abcdefg'
             assert kwargs.get('method') == 'GET'
-            assert kwargs.get('follow_redirects') == False
+            assert not kwargs.get('follow_redirects')
 
             return _Response(200, '')
 
     subject = Browser(Client())
 
     subject.get('/abcdefg')
+
+
+def test_get_404():
+
+    class Client():
+
+        def open(self, url, *args, **kwargs):
+            assert url == '/abcdefg'
+            assert kwargs.get('method') == 'GET'
+            assert not kwargs.get('follow_redirects')
+
+            return _Response(404, '')
+
+    subject = Browser(Client())
+
+    subject.get('/abcdefg', status=404)
 
 
 def test_post():
@@ -46,7 +62,7 @@ def test_post():
         def open(self, url, *args, **kwargs):
             assert url == '/abcdefg'
             assert kwargs.get('method') == 'POST'
-            assert kwargs.get('follow_redirects') == False
+            assert not kwargs.get('follow_redirects')
             assert kwargs.get('data') == {'key': 'value'}
 
             return _Response(200, '')
@@ -108,7 +124,7 @@ def test_follow_link():
         def open(self, url, *args, **kwargs):
             assert url == '/right'
             assert kwargs.get('method') == 'GET'
-            assert kwargs.get('follow_redirects') == False
+            assert not kwargs.get('follow_redirects')
 
             return _Response(200, 'Sent OK')
 
