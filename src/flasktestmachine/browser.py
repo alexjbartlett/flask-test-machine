@@ -68,10 +68,18 @@ class Browser(object, HtmlAssertions):
         form_data = {}
 
         for input in form.find_all('input', {'name': True}):
-            form_data[input.get('name')] = input.get('value')
+            if input.get('type') in ('checkbox', 'radio'):
+                if 'checked' in input.attrs:
+                    form_data[input.get('name')] = input.get('value')
+            else:
+                form_data[input.get('name')] = input.get('value')
 
         # update the form data with user supplied
-        form_data.update(data)
+        for k, v in data.iteritems():
+            if v is None:
+                del form_data[k]
+            else:
+                form_data[k] = v
 
         action = form.get('action') or self.url
         method = form.get('method').upper()

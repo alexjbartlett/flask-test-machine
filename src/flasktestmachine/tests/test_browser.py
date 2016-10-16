@@ -117,6 +117,75 @@ def test_submit_form():
     assert subject.html == 'Success'
 
 
+def test_submit_form_checkbox_not_checked():
+
+    class Client():
+
+        def open(self, url, *args, **kwargs):
+            assert kwargs.get('data') == {}
+
+            return _Response(200, 'Success')
+
+    subject = Browser(Client())
+    subject.url = '/xyz'
+    subject.html = """
+        <html>
+            <form method="post">
+                <input type="checkbox" name="tgt" value="y" />
+            </form>
+        </html>
+    """
+
+    subject.submit_form({}, {})
+    assert subject.html == 'Success'
+
+
+def test_submit_form_checkbox_checked():
+
+    class Client():
+
+        def open(self, url, *args, **kwargs):
+            assert kwargs.get('data') == {'tgt': 'y'}
+
+            return _Response(200, 'Success')
+
+    subject = Browser(Client())
+    subject.url = '/xyz'
+    subject.html = """
+        <html>
+            <form method="post">
+                <input type="checkbox" name="tgt" value="y" checked />
+            </form>
+        </html>
+    """
+
+    subject.submit_form({}, {})
+    assert subject.html == 'Success'
+
+
+def test_submit_form_checkbox_checked_turn_off():
+
+    class Client():
+
+        def open(self, url, *args, **kwargs):
+            assert kwargs.get('data') == {}
+
+            return _Response(200, 'Success')
+
+    subject = Browser(Client())
+    subject.url = '/xyz'
+    subject.html = """
+        <html>
+            <form method="post">
+                <input type="checkbox" name="tgt" value="y" checked />
+            </form>
+        </html>
+    """
+
+    subject.submit_form({}, {'tgt': None})
+    assert subject.html == 'Success'
+
+
 def test_follow_link():
 
     class Client():
