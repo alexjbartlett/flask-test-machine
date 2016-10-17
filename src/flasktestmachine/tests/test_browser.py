@@ -89,6 +89,7 @@ def test_json_response():
     assert subject.json == {'value': 7}
 
 
+
 def test_submit_form():
 
     class Client():
@@ -114,6 +115,48 @@ def test_submit_form():
 
     subject.submit_form({}, {'x': 'y'})
 
+    assert subject.html == 'Success'
+
+
+def test_submit_form_with_action():
+
+    class Client():
+
+        def open(self, url, *args, **kwargs):
+            assert url == '/some-action'
+            return _Response(200, 'Success')
+
+    subject = Browser(Client())
+    subject.url = '/xyz'
+    subject.html = """
+        <html>
+            <form method="post" action="/some-action">
+            </form>
+        </html>
+    """
+
+    subject.submit_form({}, {})
+    assert subject.html == 'Success'
+
+
+def test_submit_form_with_query_string():
+
+    class Client():
+        def open(self, url, *args, **kwargs):
+            assert url == '/xyz'
+            assert kwargs.get('query_string') == [('foo', 'bar')]
+            return _Response(200, 'Success')
+
+    subject = Browser(Client())
+    subject.url = '/xyz?foo=bar'
+    subject.html = """
+        <html>
+            <form method="post">
+            </form>
+        </html>
+    """
+
+    subject.submit_form({}, {})
     assert subject.html == 'Success'
 
 

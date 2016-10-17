@@ -1,5 +1,6 @@
 from inspection import HtmlAssertions
 import json
+import urlparse
 
 
 class Browser(object, HtmlAssertions):
@@ -35,12 +36,17 @@ class Browser(object, HtmlAssertions):
 
         if 'data' in kwargs:
             del kwargs['data']
+        if 'query_string' in kwargs:
+            del kwargs['query_string']
 
         while self.rsp and self.rsp.status_code in [301, 302]:
             self.url = self.rsp.location
             kwargs['method'] = 'GET'
 
-            self.rsp = self.client.open(self.url, *args, **kwargs)
+            action, qs = split_url(self.url)
+            kwargs['query_string'] = qs
+
+            self.rsp = self.client.open(action, *args, **kwargs)
 
         assert self.rsp.status_code == expected_status
 
@@ -81,13 +87,16 @@ class Browser(object, HtmlAssertions):
             else:
                 form_data[k] = v
 
-        action = form.get('action') or self.url
+        action, query_string = split_url(form.get('action') or self.url)
         method = form.get('method').upper()
 
         if method == 'GET':
-            return self.open(action, method='GET', query_string=form_data)
+            query_string.update(form_data)
+            return self.open(action, method='GET', query_string=query_string)
 
-        return self.open(action, method=method, data=form_data)
+        return self.open(action, method=method,
+                         data=form_data,
+                         query_string=query_string)
 
     def follow_link(self, text=None, href=None):
         """
@@ -102,3 +111,12 @@ class Browser(object, HtmlAssertions):
         a = self.assert_link(text=text, href=href)
 
         self.get(a['href'])
+
+
+def split_url(url):
+    if '?' in url:
+        action, qs = url.split('?')
+        query_string = urlparse.parse_qsl(qs, keep_blank_values=True)
+        return action, query_string
+
+    return url, None
