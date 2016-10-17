@@ -160,6 +160,28 @@ def test_submit_form_with_query_string():
     assert subject.html == 'Success'
 
 
+def test_submit_form_by_get():
+
+    class Client():
+        def open(self, url, *args, **kwargs):
+            assert url == '/abc'
+            assert kwargs.get('query_string') == [('foo', 'bar'), ('f', 'v')]
+            return _Response(200, 'Success')
+
+    subject = Browser(Client())
+    subject.url = '/abc?foo=bar'
+    subject.html = """
+        <html>
+            <form method="get">
+                <input type="text" name="f" value="v" />
+            </form>
+        </html>
+    """
+
+    subject.submit_form({}, {})
+    assert subject.html == 'Success'
+
+
 def test_submit_form_checkbox_not_checked():
 
     class Client():

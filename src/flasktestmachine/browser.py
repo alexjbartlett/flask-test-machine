@@ -91,7 +91,8 @@ class Browser(object, HtmlAssertions):
         method = form.get('method').upper()
 
         if method == 'GET':
-            query_string.update(form_data)
+            for k, v in form_data.iteritems():
+                query_string.append((k, v))
             return self.open(action, method='GET', query_string=query_string)
 
         return self.open(action, method=method,
@@ -119,4 +120,4 @@ def split_url(url):
         query_string = urlparse.parse_qsl(qs, keep_blank_values=True)
         return action, query_string
 
-    return url, None
+    return url, []
