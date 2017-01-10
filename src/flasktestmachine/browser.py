@@ -2,7 +2,7 @@
 from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 
-from inspection import HtmlAssertions
+from .inspection import HtmlAssertions
 import json
 import urlparse
 from werkzeug.http import parse_cookie
@@ -19,13 +19,18 @@ class Browser(object, HtmlAssertions):
 
         self.url = None
 
+        self.environ_base = {}
+
+    def set_user_agent(self, value):
+        self.environ_base['HTTP_USER_AGENT'] = value
+
     def get(self, *args, **kwargs):
-        '''GET a url from the app'''
+        """GET a url from the app"""
         kwargs['method'] = 'GET'
         return self.open(*args, **kwargs)
 
     def post(self, *args, **kwargs):
-        '''POST a request to the app'''
+        """POST a request to the app"""
         kwargs['method'] = 'POST'
         return self.open(*args, **kwargs)
 
@@ -35,6 +40,7 @@ class Browser(object, HtmlAssertions):
         follow_redirects = kwargs.get('follow_redirects', True)
         kwargs['follow_redirects'] = False
         expected_status = kwargs.pop('status', 200)
+        kwargs.setdefault('environ_base', self.environ_base)
 
         self._soup = None
         self.url = url
@@ -55,7 +61,9 @@ class Browser(object, HtmlAssertions):
 
                 self.rsp = self.client.open(action, *args, **kwargs)
 
-        assert self.rsp.status_code == expected_status
+        assert self.rsp.status_code == expected_status, \
+            'Expected {} received {}'.format(expected_status,
+                                             self.rsp.status_code)
 
         cd = self.rsp.headers.get('Content-Disposition') or ''
         if cd.startswith('attachment'):

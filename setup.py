@@ -1,15 +1,16 @@
 from setuptools import setup, find_packages
-import sys, os
+import os
 
 here = os.path.abspath(os.path.dirname(__file__))
 README = open(os.path.join(here, 'README.rst')).read()
 NEWS = open(os.path.join(here, 'NEWS.txt')).read()
 
 
-version = '0.0.1'
+version = '0.0.2'
 
 install_requires = [
-    'beautifulsoup4'
+    'beautifulsoup4',
+    'werkzeug'
 ]
 
 

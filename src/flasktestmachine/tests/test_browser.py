@@ -12,6 +12,7 @@ class _Response():
         self.data = data
         self.location = location
         self.content_type = content_type
+        self.headers = {}
 
 
 class _JsonResponse():
@@ -21,6 +22,7 @@ class _JsonResponse():
         self.status_code = status_code
         self.data = json.dumps(data)
         self.content_type = 'application/json'
+        self.headers = {}
 
 
 def test_get():
