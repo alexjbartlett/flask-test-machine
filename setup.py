@@ -9,8 +9,7 @@ NEWS = open(os.path.join(here, 'NEWS.txt')).read()
 version = '0.0.2'
 
 install_requires = [
-    'beautifulsoup4',
-    'werkzeug'
+    'beautifulsoup4'
 ]
 
 
