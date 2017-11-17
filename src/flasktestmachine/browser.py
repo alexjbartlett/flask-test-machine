@@ -53,7 +53,7 @@ class Browser(object, HtmlAssertions):
 
         if follow_redirects:
             while self.rsp and self.rsp.status_code in [301, 302]:
-                self.url = self.rsp.location
+                self.url = self.rsp.location.replace('http://localhost', '')
                 kwargs['method'] = 'GET'
 
                 action, qs = split_url(self.url)
