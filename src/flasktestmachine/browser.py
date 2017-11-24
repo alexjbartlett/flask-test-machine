@@ -91,14 +91,10 @@ class Browser(object, HtmlAssertions):
 
         form = self.soup.find('form', selector)
         assert form, 'Form not found'
-        form_data = {}
 
-        for input in form.find_all('input', {'name': True}):
-            if input.get('type') in ('checkbox', 'radio'):
-                if 'checked' in input.attrs:
-                    form_data[input.get('name')] = input.get('value')
-            else:
-                form_data[input.get('name')] = input.get('value')
+        form_data = {}
+        form_data.update(self._get_form_input_values(form))
+        form_data.update(self._get_form_select_values(form))
 
         # update the form data with user supplied
         for k, v in data.iteritems():
@@ -121,6 +117,24 @@ class Browser(object, HtmlAssertions):
                          data=form_data,
                          query_string=query_string,
                          **kwargs)
+
+    def _get_form_input_values(self, form):
+        rv = {}
+        for input in form.find_all('input', {'name': True}):
+            if input.get('type') in ('checkbox', 'radio'):
+                if 'checked' in input.attrs:
+                    rv[input.get('name')] = input.get('value')
+            else:
+                rv[input.get('name')] = input.get('value')
+        return rv
+
+    def _get_form_select_values(self, form):
+        rv = {}
+        for select in form.find_all('select', {'name': True}):
+            for i, option in enumerate(select.find_all('option')):
+                if i == 0 or 'selected' in option.attrs:
+                    rv[select.get('name')] = option.get('value')
+        return rv
 
     def follow_link(self, text=None, href=None, **kwargs):
         """

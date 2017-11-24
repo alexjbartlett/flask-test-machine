@@ -253,6 +253,56 @@ def test_submit_form_checkbox_checked_turn_off():
     assert subject.html == 'Success'
 
 
+def test_submit_form_select_no_selected():
+
+    class Client():
+        def open(self, url, *args, **kwargs):
+            assert kwargs.get('data') == {'tgt': '1'}
+
+            return _Response(200, 'Success')
+
+    subject = Browser(Client())
+    subject.url = '/xyz'
+    subject.html = """
+        <html>
+            <form method="post">
+                <select name="tgt">
+                    <option value="1">One</option>
+                    <option value="2">Two</option>
+                </select>
+            </form>
+        </html>
+    """
+
+    subject.submit_form({}, {})
+    assert subject.html == 'Success'
+
+
+def test_submit_form_select_selected():
+
+    class Client():
+        def open(self, url, *args, **kwargs):
+            assert kwargs.get('data') == {'tgt': '2'}
+
+            return _Response(200, 'Success')
+
+    subject = Browser(Client())
+    subject.url = '/xyz'
+    subject.html = """
+        <html>
+            <form method="post">
+                <select name="tgt">
+                    <option value="1">One</option>
+                    <option value="2" selected>Two</option>
+                </select>
+            </form>
+        </html>
+    """
+
+    subject.submit_form({}, {})
+    assert subject.html == 'Success'
+
+
 def test_follow_link():
 
     class Client():
