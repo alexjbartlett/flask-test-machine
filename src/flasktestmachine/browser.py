@@ -5,6 +5,8 @@ from __future__ import (absolute_import, division,
 import json
 
 from six.moves.urllib.parse import parse_qsl
+from six import iteritems
+
 from werkzeug.http import parse_cookie
 
 from .inspection import HtmlAssertions
@@ -99,7 +101,7 @@ class Browser(HtmlAssertions):
         form_data.update(self._get_form_select_values(form))
 
         # update the form data with user supplied
-        for k, v in data.iteritems():
+        for k, v in iteritems(data):
             if v is None:
                 del form_data[k]
             else:
@@ -109,7 +111,7 @@ class Browser(HtmlAssertions):
         method = form.get('method').upper()
 
         if method == 'GET':
-            for k, v in form_data.iteritems():
+            for k, v in iteritems(form_data):
                 query_string.append((k, v))
             return self.open(action, method='GET',
                              query_string=query_string,
