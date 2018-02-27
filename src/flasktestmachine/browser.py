@@ -2,13 +2,12 @@
 from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 
-from .inspection import HtmlAssertions
-from six.moves.urllib.parse import urlparse
-
 import json
 
-import urlparse
+from six.moves.urllib.parse import parse_qsl
 from werkzeug.http import parse_cookie
+
+from .inspection import HtmlAssertions
 
 
 class Browser(object, HtmlAssertions):
@@ -165,7 +164,7 @@ class Browser(object, HtmlAssertions):
 def split_url(url):
     if '?' in url:
         action, qs = url.split('?')
-        query_string = urlparse.parse_qsl(qs, keep_blank_values=True)
+        query_string = parse_qsl(qs, keep_blank_values=True)
         return action, query_string
 
     return url, []
