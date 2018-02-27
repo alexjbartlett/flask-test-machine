@@ -3,7 +3,10 @@ from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 
 from .inspection import HtmlAssertions
+from six.moves.urllib.parse import urlparse
+
 import json
+
 import urlparse
 from werkzeug.http import parse_cookie
 
