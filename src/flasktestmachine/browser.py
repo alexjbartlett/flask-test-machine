@@ -10,7 +10,7 @@ from werkzeug.http import parse_cookie
 from .inspection import HtmlAssertions
 
 
-class Browser(object, HtmlAssertions):
+class Browser(HtmlAssertions):
 
     _soup = None
     html = ''
