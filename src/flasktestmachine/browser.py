@@ -56,7 +56,7 @@ class Browser(HtmlAssertions):
             del kwargs['query_string']
 
         if follow_redirects:
-            while self.rsp and self.rsp.status_code in [301, 302]:
+            while self.rsp and self.rsp.status_code in [301, 302, 308]:
                 self.url = self.rsp.location.replace('http://localhost', '')
                 kwargs['method'] = 'GET'
 
